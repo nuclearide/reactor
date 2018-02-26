@@ -1,0 +1,23 @@
+{
+  "name": "@reactide/editor",
+  "version": "0.0.1",
+  "description": "ReactIDE's Editor",
+  "main": "dist/index.js",
+  "repository": "https://github.com/reactide-community/editor.git",
+  "author": "Simon Hochrein <simon@ministrycrm.com>",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.0.38",
+    "@types/react-dom": "^16.0.4",
+    "react-dom": "^16.2.0",
+    "typescript": "^2.7.2",
+    "parcel-bundler": "^1.6.2"
+  },
+  "scripts": {
+    "dev": "tsc -w",
+    "test": "cd test && parcel index.html"
+  }
+}
