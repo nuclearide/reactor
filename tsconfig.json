@@ -2,6 +2,7 @@
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "src",
-        "jsx": "react"
+        "jsx": "react",
+        "target": "es6"
     }
 }
