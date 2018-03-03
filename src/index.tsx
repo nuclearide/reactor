@@ -24,7 +24,7 @@ function parseLines() {
     return ret;
 }
 
-export default class Editor extends React.Component<any, { cursor: { line: number, ch: number }, lines: (Token[])[] }> {
+export default class Editor extends React.Component<any, { cursor: { line: number, ch: number }, lines: (Token[])[], focused: boolean }> {
     private _input: HTMLInputElement;
     constructor(props) {
         super(props);
@@ -33,7 +33,8 @@ export default class Editor extends React.Component<any, { cursor: { line: numbe
                 ch: 0,
                 line: 0
             },
-            lines: []
+            lines: [],
+            focused: false
         }
     }
     render() {
@@ -41,10 +42,10 @@ export default class Editor extends React.Component<any, { cursor: { line: numbe
             <div>
                 <button onClick={() => eval(file.lines.join('\n'))}>Run!</button>
                 <div className="reactor" onClick={this.onClick}>
-                    <Cursors cursorPositions={[this.state.cursor]} />
-                    <input ref={input => this._input = input} className="reactor-textbox" value={""} onKeyDown={this.onChange} />
+                    <Cursors cursorPositions={[this.state.cursor]} visible={this.state.focused}/>
+                    <input ref={input => this._input = input} className="reactor-textbox" value={""} onKeyDown={this.onChange} onBlur={() => this.setState({focused: false})}/>
                     {this.state.lines.map((tokens, i) =>
-                        <Line tokens={tokens} key={i} lineNumber={i + 1} />
+                        <Line tokens={tokens} key={i} lineNumber={i + 1} text={file.getLine(i)} onClick={this.onLineClick}/>
                     )}
                 </div>
             </div>
@@ -75,6 +76,9 @@ export default class Editor extends React.Component<any, { cursor: { line: numbe
         } else if (e.key == 'ArrowUp') {
             if (cursor.line > 0) {
                 cursor.line--;
+                if (file.getLine(cursor.line).length < cursor.ch) {
+                    cursor.ch = file.getLine(cursor.line).length;
+                }
                 this.setState({ cursor });
             }
         } else if (e.key.length == 1) {
@@ -122,6 +126,11 @@ export default class Editor extends React.Component<any, { cursor: { line: numbe
     }
     onClick = (e) => {
         this._input.focus();
+        this.setState({focused: true});
+    }
+
+    onLineClick = (line: number, ch: number) => {
+        this.setState({cursor: {line, ch}});
     }
     componentDidMount() {
         this.setState({ lines: parseLines() });
