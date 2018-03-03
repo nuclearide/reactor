@@ -1,6 +1,6 @@
 var keywords = ["break", "do", "instanceof", "typeof", "case", "else", "new", "var", "catch", "finally", "return", "void", "continue", "for", "switch", "while", "debugger", "function", "this", "with", "default", "if", "throw", "delete", "in", "try", "abstract", "export", "interface", "static", "boolean", "extends", "long", "super", "byte", "final", "native", "synchronized", "char", "float", "package", "throws", "class", "goto", "private", "transient", "const", "implements", "protected", "volatile", "double", "import", "public", "enum", "int", "short"];
 var reserved = ["null", "true", "false", "this"];
-var declarations = ["var", "let", "const", "class", "enum", "type", "interface", "function"];
+var declarations = ["var", "const", "class", "enum", "type", "interface", "function", "let"];
 
 export interface Token {
     type: string;
@@ -80,6 +80,21 @@ export class Tokenizer {
         return -1;
     }
 
+    getLine(lineNumber: number) {
+        return this.lines[lineNumber];
+    }
+
+    setLine(lineNumber: number, contents: string) {
+        this.lines[lineNumber] = contents;
+    }
+
+    insertLine(lineNumber: number, text: string = "") {
+        this.lines.splice(lineNumber, 0, text);
+    }
+
+    deleteLine(lineNumber: number) {
+        this.lines.splice(lineNumber, 1);
+    }
     tokenize(line: string, lineNumber: number): Token[] {
         var s = new Stream(line);
         var tokens = [];

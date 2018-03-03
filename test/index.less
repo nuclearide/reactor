@@ -18,7 +18,9 @@
 .reactor {
     background: @base03;
     color: @base2;
-    font-family: Menlo;
+    font-family: Hack;
+    position: relative;
+    font-size: 18px;
 
     .reactor-keyword {
         color: @red;
@@ -61,6 +63,27 @@
     .reactor-other {
         color: @base2;
     }
+    .reactor-textbox {
+        // visibility: hidden;
+        position: fixed;
+        outline: 0;
+        z-index: -1;
+    }
+    .reactor-cursors {
+        .reactor-cursor {
+            position: absolute;
+            // top : 36px;
+            // left: 59px;
+            width: 2px;
+            border-radius: 2px;
+            display: block;
+            background: #e2e2e2;
+            margin-top: 5px;
+            height: 22px;
+            margin-left: 1px;
+            animation: reactor-cursor-blink 800ms infinite;
+        }
+    }
     .reactor-line {
         display: block;
         height: auto;
@@ -80,4 +103,10 @@
             }
         }
     }
+}
+
+@keyframes reactor-cursor-blink {
+    0%{opacity: 1;}
+    50%{opacity: 0}
+    100%{opacity: 0.99}
 }
