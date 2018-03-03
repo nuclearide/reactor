@@ -1,10 +1,13 @@
 var keywords = ["break", "do", "instanceof", "typeof", "case", "else", "new", "var", "catch", "finally", "return", "void", "continue", "for", "switch", "while", "debugger", "function", "this", "with", "default", "if", "throw", "delete", "in", "try", "abstract", "export", "interface", "static", "boolean", "extends", "long", "super", "byte", "final", "native", "synchronized", "char", "float", "package", "throws", "class", "goto", "private", "transient", "const", "implements", "protected", "volatile", "double", "import", "public", "enum", "int", "short"];
-var reserved = ["null", "true", "false", "this"];
+var reserved = ["console", "null", "true", "false", "this"];
 var declarations = ["var", "const", "class", "enum", "type", "interface", "function", "let"];
+
+import * as EventEmitter from 'events';
 
 export interface Token {
     type: string;
     text: string;
+    startLine: number;
 }
 
 class Stream {
@@ -51,24 +54,29 @@ class Stream {
     }
 }
 
-export class Tokenizer {
-    private lines: string[];
+export class Tokenizer extends EventEmitter {
+    private _lines: string[];
     // private _blocks;
     private _commentStart: number = -1;
     private _stringStart: number = -1;
 
     constructor(src: string) {
-        this.lines = src.split('\n').map((line) => {
+        super();
+        this._lines = src.split('\n').map((line) => {
             return line.replace('\n', '');
         });
     }
 
+    get lines() {
+        return this._lines;
+    }
+
     parseLine(line: number) {
-        return this.tokenize(this.lines[line], line);
+        return this.tokenize(this._lines[line], line);
     }
 
     getLineCount() {
-        return this.lines.length;
+        return this._lines.length;
     }
 
     static getLastRealToken(tokens: Token[]): number {
@@ -81,19 +89,22 @@ export class Tokenizer {
     }
 
     getLine(lineNumber: number) {
-        return this.lines[lineNumber];
+        return this._lines[lineNumber];
     }
 
     setLine(lineNumber: number, contents: string) {
-        this.lines[lineNumber] = contents;
+        this._lines[lineNumber] = contents;
+        this.emit('updateLine', lineNumber, contents);
     }
 
     insertLine(lineNumber: number, text: string = "") {
-        this.lines.splice(lineNumber, 0, text);
+        this._lines.splice(lineNumber, 0, text);
+        this.emit('insertLine', lineNumber, text);
     }
 
     deleteLine(lineNumber: number) {
-        this.lines.splice(lineNumber, 1);
+        this._lines.splice(lineNumber, 1);
+        this.emit('deleteLine', lineNumber);
     }
     tokenize(line: string, lineNumber: number): Token[] {
         var s = new Stream(line);
@@ -103,7 +114,6 @@ export class Tokenizer {
             var commentLine = s.eatWhile((char) => {
                 if(s.get() == '*' && s.peek() == '/') {
                     finished = true;
-                    this._commentStart = -1;
                     return false;
                 } else {
                     return true;
@@ -112,13 +122,16 @@ export class Tokenizer {
             if(finished) {
                 tokens.push({
                     text: commentLine + s.eat(),
-                    type: 'comment'
+                    type: 'multiline-comment',
+                    startLine: this._commentStart
                 });
                 s.iterator+=1;
+                this._commentStart = -1;
             } else {
                 tokens.push({
                     text: line,
-                    type: 'comment'
+                    type: 'multiline-comment',
+                    startLine: this._commentStart
                 });
                 s.iterator = line.length;
             }
@@ -171,10 +184,11 @@ export class Tokenizer {
                     } else {
                         tokens.push({
                             text: line.slice(iterator, line.length),
-                            type: 'comment'
+                            type: 'multiline-comment',
+                            startLine: this._commentStart
                         });
-                        s.iterator = line.length; 
-                    }                   
+                        s.iterator = line.length;
+                    }
                 } else if (/[\s\[\]\(\)\{\}a-zA-Z0-9+\\\-*&%=<>!?|~^@$]/.test(s.peek())) {
                     var old = s.iterator;
                     var regex = "";
@@ -223,8 +237,8 @@ export class Tokenizer {
                         text: line.slice(iterator, line.length),
                         type: 'string'
                     });
-                    s.iterator = line.length; 
-                }  
+                    s.iterator = line.length;
+                }
             }
             else if (/[+\-*&%=<>!?|~^@]/.test(s.get())) {
                 tokens.push({

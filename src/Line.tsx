@@ -1,7 +1,8 @@
 import * as React from "react";
 import Token from "./Token";
+import {Token as TokenType} from './tokenizer';
 
-export default class Line extends React.Component<{tokens: {text: string, type: string}[], lineNumber: number}, any> {
+export default class Line extends React.Component<{tokens: TokenType[], lineNumber: number}, any> {
     render() {
         return (
             <div className="reactor-line">
