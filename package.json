@@ -7,7 +7,14 @@
   "author": "Simon Hochrein <simon@ministrycrm.com>",
   "license": "MIT",
   "dependencies": {
-    "react": "^16.2.0"
+    "@types/first-mate": "^7.0.4",
+    "@types/node": "^10.1.4",
+    "@types/text-buffer": "^13.0.4",
+    "buffer": "^5.1.0",
+    "first-mate": "^7.1.1",
+    "onigasm": "^2.0.0",
+    "react": "^16.2.0",
+    "text-buffer": "^13.14.3"
   },
   "devDependencies": {
     "@types/react": "^16.0.38",
@@ -19,6 +26,6 @@
   },
   "scripts": {
     "dev": "tsc -w",
-    "test": "cd test && parcel index.html"
+    "test": "cd test && parcel index.html --public-url . --target electron"
   }
 }

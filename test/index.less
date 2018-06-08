@@ -1,113 +1,54 @@
-@base03:    #002b36;
-@base02:    #073642;
-@base01:    #586e75;
-@base00:    #657b83;
-@base0:     #839496;
-@base1:     #93a1a1;
-@base2:     #eee8d5;
-@base3:     #fdf6e3;
-@yellow:    #b58900;
-@orange:    #cb4b16;
-@red:       #dc322f;
-@magenta:   #d33682;
-@violet:    #6c71c4;
-@blue:      #268bd2;
-@cyan:      #2aa198;
-@green:     #859900;
-
-.reactor {
-    background: @base03;
-    color: @base2;
-    font-family: Hack;
-    position: relative;
-    font-size: 18px;
-    cursor: text;
-
-    .reactor-keyword {
-        color: @red;
-    }
-    .reactor-operator {
-        color: @violet;
-    }
-    .reactor-whitespace {
-        width: 10px;
-        display: inline-block;
-    }
-    .reactor-whitespace:before {
-        content: '.';
-        color: rgba(255, 255, 255, .2);
-    }
-    .reactor-definition {
-        color: @blue;
-    }
-    .reactor-string {
-        color: @orange;
-    }
-    .reactor-number {
-        color: @green;
-    }
-    .reactor-comment, .reactor-multiline-comment {
-        color: @base00;
-    }
-    .reactor-function {
-        color: @yellow;
-    }
-    .reactor-bracket {
-        color: @base2;
-    }
-    .reactor-regex {
-        color: hotpink;
-    }
-    .reactor-reserved {
-        color: @green;
-    }
-    .reactor-other {
-        color: @base2;
-    }
-    .reactor-textbox {
-        // visibility: hidden;
-        position: fixed;
-        outline: 0;
-        z-index: -1;
-    }
-    .reactor-cursors {
-        .reactor-cursor {
-            position: absolute;
-            // top : 36px;
-            // left: 59px;
-            width: 2px;
-            border-radius: 2px;
-            display: block;
-            background: #e2e2e2;
-            margin-top: 5px;
-            height: 22px;
-            margin-left: 1px;
-            animation: reactor-cursor-blink 800ms infinite;
-        }
-    }
-    .reactor-line {
-        display: block;
-        height: auto;
-        .reactor-linenumber {
-            text-align: center;
-            display: inline-block;
-            margin-right: 5px;
-            background: @base02;
-            min-width: 20px;
-            padding: 5px;
-        }
-        .reactor-linecontents {
-            display: inline-block;
-            padding: 5px;
-            span {
-                text-align: center;
-            }
-        }
-    }
+body {
+    font-family: "Fira Code";
+    color: lightgray;
+    margin: 0;
 }
 
-@keyframes reactor-cursor-blink {
-    0%{opacity: 1;}
-    50%{opacity: 0}
-    100%{opacity: 0.99}
+.editor {
+    user-select: none;
+    cursor: text;
+}
+
+span {
+    white-space: pre;
+}
+
+.keyword,
+.storage {
+    color: red;
+}
+
+.function-call {
+    color: blue;
+}
+
+.punctuation, .brace {
+    color: gray;
+}
+.comment {
+    color: gray;
+}
+
+.string, .attribute-name, .jsdoc {
+    color: green;
+}
+
+.tag.name, .property-name {
+    color: red;
+}
+
+.cursor {
+    animation: blink .5s alternate infinite;
+    background: hotpink;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    width: 2px;
+    height: 19px;
+}
+
+@keyframes blink {
+    from{opacity: 0}
+    to{opacity: 1}
 }
